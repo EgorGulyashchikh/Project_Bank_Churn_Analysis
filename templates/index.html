@@ -1,1 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Churn Prediction</title>
+    <style>
+        :root {
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #757575;
+            --darker-gray: #424242;
+            --text-color: #212121;
+        }
+        
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 20px;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+        }
+        
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: var(--darker-gray);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .form-group { 
+            margin-bottom: 0;
+        }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold;
+            color: var(--darker-gray);
+            font-size: 14px;
+        }
+        
+        input, select { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 1px solid var(--medium-gray); 
+            border-radius: 4px; 
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--dark-gray);
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        button { 
+            padding: 12px 30px; 
+            background: var(--dark-gray); 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        button:hover { 
+            background: var(--darker-gray); 
+        }
+        
+        .result { 
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        
+        .result-header {
+            color: var(--darker-gray);
+            border-bottom: 1px solid var(--medium-gray);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .probability-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--darker-gray);
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .prediction-container {
+            margin: 20px 0;
+        }
+        
+        .prediction-value {
+            font-size: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 10px auto;
+        }
+        
+        .will-churn {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        
+        .will-stay {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .shap-section {
+            width: 100%;
+            margin: 30px auto;
+            text-align: center;
+        }
+        
+        .graph-container {
+            width: 100%;
+            margin: 30px 0;
+        }
+        
+        .graph-title {
+            color: var(--darker-gray);
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        .graph-image {
+            width: 100%;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Churn Prediction</h1>
+        
+        <div class="form-section">
+            <form id="predictionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="CreditScore">Credit Score</label>
+                        <input type="number" id="CreditScore" name="CreditScore" min="350" max="850" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Geography">Geography</label>
+                        <select id="Geography" name="Geography" required>
+                            <option value="">-- Select --</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Spain">Spain</option>
+                            <option value="France">France</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Gender">Gender</label>
+                        <select id="Gender" name="Gender" required>
+                            <option value="">-- Select --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Age">Age</label>
+                        <input type="number" id="Age" name="Age" min="18" max="100" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Tenure">Tenure (years)</label>
+                        <select id="Tenure" name="Tenure" required>
+                            <option value="">-- Select --</option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="Balance">Balance</label>
+                        <input type="number" step="0.01" id="Balance" name="Balance" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="NumOfProducts">Products</label>
+                        <select id="NumOfProducts" name="NumOfProducts" required>
+                            <option value="">-- Select --</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="HasCrCard">Credit Card</label>
+                        <select id="HasCrCard" name="HasCrCard" required>
+                            <option value="">-- Select --</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="IsActiveMember">Active Member</label>
+                        <select id="IsActiveMember" name="IsActiveMember" required>
+                            <option value="">-- Select --</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="EstimatedSalary">Salary</label>
+                        <input type="number" step="0.01" id="EstimatedSalary" name="EstimatedSalary" min="0" required>
+                    </div>
+                </div>
+                
+                <div class="button-container">
+                    <button type="submit">Predict Churn</button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="result" class="result" style="display: none;">
+            <h2 class="result-header">Prediction Result</h2>
+            
+            <div class="prediction-container">
+                <p>Churn Probability:</p>
+                <span id="probability" class="probability-value">0%</span>
+                
+                <p>Prediction:</p>
+                <span id="prediction" class="prediction-value"></span>
+            </div>
+            
+            <div id="shap-section" class="shap-section">
+                <div class="graph-container">
+                    <p class="graph-title">Prediction Explanation</p>
+                    <img id="shapForce" src="" alt="SHAP Force" class="graph-image">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('predictionForm');
+            if (!form) {
+                console.error('Form not found! Check HTML structure');
+                return;
+            }
 
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+        
+                try {
+                    // Get elements once
+                    const resultDiv = document.getElementById('result');
+                    const probabilitySpan = document.getElementById('probability');
+                    const predictionSpan = document.getElementById('prediction');
+                    const shapSection = document.getElementById('shap-section');
+                    const shapForceImg = document.getElementById('shapForce');
+
+                    // Checking the existence of elements
+                    if (!resultDiv || !probabilitySpan || !predictionSpan || 
+                        !shapSection || !shapForceImg) {
+                        throw new Error('Required HTML elements are missing');
+                    }
+
+                    // Sending data
+                    const formData = {
+                        CreditScore: parseInt(document.getElementById('CreditScore').value),
+                        Geography: document.getElementById('Geography').value,
+                        Gender: document.getElementById('Gender').value,
+                        Age: parseInt(document.getElementById('Age').value),
+                        Tenure: parseInt(document.getElementById('Tenure').value),
+                        Balance: parseFloat(document.getElementById('Balance').value),
+                        NumOfProducts: parseInt(document.getElementById('NumOfProducts').value),
+                        HasCrCard: parseInt(document.getElementById('HasCrCard').value),
+                        IsActiveMember: parseInt(document.getElementById('IsActiveMember').value),
+                        EstimatedSalary: parseFloat(document.getElementById('EstimatedSalary').value)
+                    };
+                    
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+
+                    // Update interface
+                    probabilitySpan.textContent = (data.probability * 100).toFixed(2) + '%';
+                    
+                    // Set prediction with appropriate class
+                    if (data.prediction) {
+                        predictionSpan.textContent = 'Customer will churn';
+                        predictionSpan.className = 'prediction-value will-churn';
+                    } else {
+                        predictionSpan.textContent = 'Customer will stay';
+                        predictionSpan.className = 'prediction-value will-stay';
+                    }
+                    
+                    // Update SHAP
+                    if (data.shap_force) {
+                        shapForceImg.src = `${data.shap_force}?${Date.now()}`;
+                        shapSection.style.display = 'block';
+                    } else {
+                        shapSection.style.display = 'none';
+                    }
+                    
+                    resultDiv.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Form submission failed:', error);
+                    alert(`Error: ${error.message}`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

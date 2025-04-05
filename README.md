@@ -58,7 +58,7 @@ It contains the following data:
 
 - **Data is highly imbalanced, only 20.37% of records belong to the target class**
 
-- ### Almost half of the clients from Germany are Exited:
+- ### Almost a third of the clients from Germany are Exited:
 <img src=https://github.com/EgorGulyashchikh/Project_Bank_Churn_Analysis/blob/main/images/Geography.png>
 
 - ### Clients who have 3 or 4 products that were purchased through the bank are most likely to leave

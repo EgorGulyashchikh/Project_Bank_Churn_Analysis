@@ -49,7 +49,7 @@ It contains the following data:
 
 - **Our dataset contains 10,000 records**
 
-- **Among the 13 features, only 10 are important for the model. 4 of them(CreditScore, Age, Balance, EsyimatedSalary) are numerical. Other 6 are categorical**:
+- **Among the 13 features, only 10 are important for the model. 4 of them(CreditScore, Age, Balance, EstimatedSalary) are numerical. Other 6 are categorical**:
 1) Geography - **France**, **Spain** or **Germany**
 2) Gender - **Male** or **Female**
 3) Tenure - number **between 0 and 10**

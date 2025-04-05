@@ -16,7 +16,7 @@ This project analyzes customer churn in a banking context using machine learning
 ├── templates/                          : Contains html template for Flask app
 │   └── index.html
 ├── LICENSE.md                          : MIT License
-└── README.md                           : Report
+├── README.md                           : Report
 ├── app.py                              : Flask App
 ├── churn - EDA.ipynb                   : Exploratory data analysis
 ├── churn - Model building.ipynb        : Building and comparing models

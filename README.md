@@ -116,3 +116,9 @@ The most important features for our model are **Age**, **Balance**, **NumOfProdu
 4) Males are more likely to remain loyal
 5) Customers from Germany are likely to leave
 
+
+## App for prediction
+I created Flask app that can predict probability of churn  
+It takes 10 parameters that user will enter and return prediction based on our XGB_Classifier model  
+Besides the probability, it also show a SHAP force plot. This plot explains what features have the most impact on the prediction. Red features talk about potential churn, blue ones, on the contrary, indicate that the client will remain  
+<img src=https://github.com/EgorGulyashchikh/Project_Bank_Churn_Analysis/blob/main/images/app.png>
